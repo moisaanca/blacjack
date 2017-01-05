@@ -1,6 +1,12 @@
 #include <iostream>
+#include <iomanip>
+#include <cstdlib>
+#include <ctime>
+#include <limits>
 
 using namespace std;
+float sumapariu;
+int primacarte;
 void afisreInstructiuni()
 {
 
@@ -24,6 +30,11 @@ void afisreInstructiuni()
 
 }
 
+void sumaPariata()
+{
+    cout<<"Suma pariata este:"<<endl;
+    cin>>sumapariu;
+}
 
 void permitInstructiuni()
 {
@@ -34,8 +45,12 @@ void permitInstructiuni()
 	cout << "DA - 1 si NU - 2"<<endl;
     cin>> aprobare;
     if(aprobare==1)
-        afisreinstructiuni();
+        {
+            afisreInstructiuni();
+            sumaPariata();
+        }
     if(aprobare==2)
+        sumaPariata();
 
     if(aprobare!=1 && aprobare!= 2)
     {
@@ -43,6 +58,8 @@ void permitInstructiuni()
         permitInstructiuni();
     }
 }
+
+
 
 void creareCarti(int carti[])
 {
@@ -103,7 +120,7 @@ char tipCarte;
             tipCarte=4;
             cout<<tipCarte;
         }
-        i(carteJoc>=301 && carteJoc<=314)
+        if(carteJoc>=301 && carteJoc<=314)
         {
             tipCarte=6;
             cout<<tipCarte;
@@ -117,9 +134,101 @@ char tipCarte;
 
 }
 
+void afisareCartiJoc(int carti[], int nrCarti, bool ascundePrimaParte)
+{
+    int index;
+    if(ascundePrimaParte==true)
+        cout<<"**";
+    else
+    {
+        afisareCarte(carti[0]);
+        cout<<" ";
+    }
 
+    for(index=1;index<nrCarti;index++)
+        if(carti[index] != 0)
+    {
+        afisareCarte(carti[index]);
+        cout<<" ";
+    }
+    else
+        cout<<"";
+}
+
+int valoareaCartii(int carteJoc)
+{
+    int valoarecarte;
+    switch (carteJoc % 100)
+    {
+    case 1 :
+        valoarecarte=11;
+        break;
+    case 11 :
+    case 12 :
+    case 13 :
+        valoarecarte=10;
+        break;
+    case 14 :
+        valoarecarte=1;
+        break;
+    default :
+        valoarecarte=carteJoc % 100;
+    }
+
+    return valoarecarte;
+}
+
+void numarOarecare(int minim, int maxim)
+{
+    bool inceput=true;
+    int nr;
+    if(inceput != false)
+    {
+        srand( static_cast<unsigned int>(time(NULL)) );
+        inceput=false;
+    }
+    nr=rand() % (maxim-minim + 1) + minim;
+    return nr;
+}
+
+void amestecCarti( int carti[], int marime)
+{
+    int index, primaCarte, aDouaCarte, aTreiaCarte;
+    for(index=0;index<350;index++)
+    {
+        primaCarte=0;
+        aDouaCarte=numarOarecare(0, marime);
+        aTreiaCarte=numarOarecare(0, marime);
+        primaCarte=carti[aDouaCarte];
+        carti[aDouaCarte]=carti[aTreiaCarte];
+        carti[aTreiaCarte]=primaCarte;
+    }
+}
+
+int primaCarte(int carti[])
+{
+    int index;
+    for(index=0;index<51;index++)
+        if(carti[index] != 0)
+    {
+        primacarte=carti[index];
+        carti[index]=0;
+        return primacarte;
+    }
+}
+
+void adaugaCarte (int pachet[], int carte)
+{
+    int index;
+    for(index=0;index<9;index++)
+        if(pachet[index]==0)
+    {
+        pachet[index]=carte;
+        break;
+    }
+}
  int main()
 {
-    permitinstructiuni();
+    permitInstructiuni();
     return 0;
 }
