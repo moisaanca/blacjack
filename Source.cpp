@@ -5,7 +5,34 @@
 #include <limits>
 
 using namespace std;
-float sumapariu, nivel, primaCarte;
+
+void nivelDificultate();
+void sumaPariata();
+void permitInstructiuni();
+void joacaUnJoc();
+void creareCarti(int carti[]);
+void afisareCarte(int carteJoc);
+void afisareCartiJoc(int carti[], int nrCarti, bool ascundePrimaParte);
+int valoareaCartii(int carteJoc);
+int valoareaMainii(int carti[]);
+int numarOarecare(int minim, int maxim);
+void amestecCarti(int carti[], int marime);
+int primaCarte(int carti[]);
+void adaugaCarte(int pachet[], int carte);
+void valoareAs(int jucator[]);
+void as1sau11(int dealer[], int jucator[]);
+void oprirePartida(int dealer[], int carti[], int jucator[]);
+bool joacaAltaMana(char& raspuns);
+bool carteNoua(char& raspuns);
+void afisarePunctaj(int jucator[], int dealer[]);
+void verificareCastigator(int jucator[], int dealer[]);
+void blackjacksimplu(int jucator[], int dealer[], char joaca);
+void blackjack(int jucator[], int dealer[], char joaca);
+void verificareEliminare(int jucator[], int dealer[], char joaca);
+bool continuareJoc(char& raspuns);
+void afiseazaValoare(int carti[], int dimensiune);
+
+int sumapariu, nivel;
 int primacarte;
 void afisreInstructiuni()
 {
@@ -46,35 +73,81 @@ void nivelDificultate()
 
 void sumaPariata()
 {
-	nivelDificultate();
+	
 	cout << "Suma pariata este:" << endl;
 	cin >> sumapariu;
+	
 }
 
 void permitInstructiuni()
 {
-	int aprobare;
-	cout << "						   BLACKJACK										" << endl;
+	char aprobare;
 	cout << endl;
 	cout << "Doriti sa cititi instructiunile?" << endl;
 	cout << "DA - 1 si NU - 2" << endl;
 	cin >> aprobare;
-	if (aprobare == 1)
+	if (aprobare == '1')
 	{
 		afisreInstructiuni();
 		sumaPariata();
+		nivelDificultate();
 	}
-	if (aprobare == 2)
+	if (aprobare == '2')
+	{
 		sumaPariata();
+		nivelDificultate();
+	}
 
-	if (aprobare != 1 && aprobare != 2)
+	if (aprobare != '1' && aprobare != '2')
 	{
 		cout << "EROARE. Alegeti un raspuns valid(1 sau 2)";
 		permitInstructiuni();
 	}
 }
 
-
+void joacaUnJoc()
+{
+	char play = 'N';
+	do
+	{
+		char retragere = 'D';
+		int carti[52];
+		creareCarti(carti);
+		amestecCarti(carti, 51);
+		int jucator[10] = { 0 };
+		int dealer[10] = { 0 };
+		adaugaCarte(jucator, primaCarte(carti));
+		adaugaCarte(dealer, primaCarte(carti));
+		adaugaCarte(jucator, primaCarte(carti));
+		adaugaCarte(dealer, primaCarte(carti));
+		cout << "________________________________________________________________________" << endl;
+		cout << "Dealerul a impartit cartile si ti-a dat doua carti" << endl;
+		blackjacksimplu(jucator, dealer, 'd');
+		blackjack(jucator, dealer, 'D');
+		cout << "Cartile tale: " << endl;
+		afisareCartiJoc(jucator, 10, false);
+		cout << "Cartile dealerului: " << endl;
+		afisareCartiJoc(dealer, 10, true);
+		valoareAs(jucator);
+		while (carteNoua(retragere))
+		{
+			adaugaCarte(jucator, primaCarte(carti));
+			cout << "Dealerul ti-a mai dat o carte" << endl;
+			cout << "Cartile tale: " << endl;
+			afisareCartiJoc(jucator, 10, false);
+			valoareAs(jucator);
+			verificareEliminare(jucator, dealer, 'd');
+			blackjack(jucator, dealer, 'D');
+		}
+		oprirePartida(dealer, carti, jucator);
+		cout << endl;
+		verificareEliminare(jucator, dealer, 'D');
+		blackjack(jucator, dealer, 'D');
+		verificareCastigator(jucator, dealer);
+		cout << endl;
+		cout << "Suma castigata: " << sumapariu << endl;
+	} while (joacaAltaMana(play));
+}
 
 void creareCarti(int carti[])
 {
@@ -201,11 +274,11 @@ int valoareaMainii(int carti[])
 	return valoare;
 }
 
-void numarOarecare(int minim, int maxim)
+int numarOarecare(int minim, int maxim)
 {
-	bool inceput = true;
+	static bool inceput = true;
 	int nr;
-	if (inceput != false)
+	if (inceput)
 	{
 		srand(static_cast<unsigned int>(time(NULL)));
 		inceput = false;
@@ -217,7 +290,7 @@ void numarOarecare(int minim, int maxim)
 void amestecCarti(int carti[], int marime)
 {
 	int index, primaCarte, aDouaCarte, aTreiaCarte;
-	for (index = 0; index<350; index++)
+	for (index = 0; index<500; index++)
 	{
 		primaCarte = 0;
 		aDouaCarte = numarOarecare(0, marime);
@@ -253,24 +326,24 @@ void adaugaCarte(int pachet[], int carte)
 
 void valoareAs(int jucator[])
 {
-	int index, valoare, 1sau11;
+	int index, valoare, asul1sau11;
 	for (index = 0; index < 9; index++)
 	{
 		valoare = valoareaCartii(jucator[index]);
 		if (valoare == 11 || valoare == 1)
 		{
-			cout << "Asul poate fi punctat fie cu 1 punct, fie cu 11 puncte. ce alegeti?";
+			cout << "Asul poate fi punctat fie cu 1 punct, fie cu 11 puncte. Ce alegeti?";
 			cout << endl;
-			cin >> 1sau11;
-			if (1sau11 == 11)
-			if (valoare == 1)
-				jucator[index] -= 13;
+			cin >> asul1sau11;
+			if (asul1sau11 == 11)
+				if (valoare == 1)
+					jucator[index] -= 13;
 			else
-			if (1sau11 == 1)
-			if (valoare == 11)
-				jucator[index] += 13;
-			else
-			if (1sau11 != 1 || 1sau11 != 11)
+				if (asul1sau11 == 1)
+					if (valoare == 11)
+						jucator[index] += 13;
+			//else
+			if (asul1sau11 != 1 && asul1sau11 != 11)
 			{
 				cin.clear();
 				cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -290,7 +363,7 @@ void as1sau11(int dealer[], int jucator[])
 		if (valoareaCartii(dealer[index]) == 11 || valoareaCartii(dealer[index])== 1)
 		if (valoareaCartii(dealer[index])==11)
 		if (valoareaMainii(dealer) - valoareaCartii(dealer[index]) + 1 < 22)
-			dealer[index] + = 13;
+			dealer[index] += 13;
 		else
 		if (valoareaMainii(dealer) > 21)
 			dealer[index] += 13;
@@ -306,7 +379,7 @@ void oprirePartida(int dealer[], int carti[], int jucator[])
 	int index;
 	for (index = 0; index < 9; index++)
 	{
-		if (valoareaCartii(dealer) < 17)
+		if (valoareaMainii(dealer) < 17)
 		if (nivel == 1)
 			adaugaCarte(dealer, primaCarte(carti));
 		else
@@ -332,12 +405,11 @@ void oprirePartida(int dealer[], int carti[], int jucator[])
 			cout << "Dealerul mai ia " << index << "carti si se opreste." << endl;
 			break;
 		}
-		if (nivel==1)
-		else
 		if (nivel == 2)
 			as1sau11(dealer, jucator);
 	}
 }
+
 
 bool joacaAltaMana(char& raspuns)
 {
@@ -349,13 +421,18 @@ bool joacaAltaMana(char& raspuns)
 		joacaUnJoc();
 		return true;
 	}
-	else
+	if (raspuns == 'N' || raspuns == 'n')
 		return false;
+	if (raspuns != 'd' && raspuns != 'D' && raspuns != 'n' && raspuns != 'N')
+	{
+		cout << "EROARE! Alegeti un raspuns valid( D sau N)." << endl;
+		joacaAltaMana(raspuns);
+	}
 }
 
 bool carteNoua(char& raspuns)
 {
-	cout << endl >> "Doriti o alta carte sau opriti jocul? (D / N)" << endl;
+	cout << endl << "Doriti o alta carte? (D / N)" << endl;
 	cin >> raspuns;
 	if (raspuns == 'D' || raspuns == 'd')
 		return true;
@@ -380,7 +457,7 @@ void verificareCastigator(int jucator[], int dealer[])
 	punctajJucator = valoareaMainii(jucator);
 	punctajDealer = valoareaMainii(dealer);
 	afisarePunctaj(jucator, dealer);
-	if ((punctajJucator < 22 && punctajJucator>punctajDealer) || (punctajDealer > 21 && punctajJucator < 22)
+	if ((punctajJucator < 22 && punctajJucator>punctajDealer) || (punctajDealer > 21 && punctajJucator < 22))
 	{
 		cout << endl;
 		cout << "Ai castigat! Felicitari!" << endl;
@@ -438,7 +515,7 @@ void blackjack(int jucator[], int dealer[], char joaca)
 	}
 }
 
-void verificareEliminare(int jucator[], int dealer[], int joaca)
+void verificareEliminare(int jucator[], int dealer[], char joaca)
 {
 	int punctajJucator, punctajDealer;
 	punctajJucator = valoareaMainii(jucator);
@@ -475,8 +552,17 @@ bool continuareJoc(char& raspuns)
 		continuareJoc(raspuns);
 	}
 }
+void afiseazaValoare(int carti[], int dimensiune)
+{
+	int index;
+	for (index = 0; index < dimensiune; index++)
+		cout << index + 1 << ".)" << carti[index] << endl;
+}
+
 int main()
 {
 	permitInstructiuni();
-	return 0;
+	//nivelDificultate();
+	joacaUnJoc();
+	return 1;
 }
