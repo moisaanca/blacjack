@@ -45,7 +45,7 @@ int sumaTotala;
 void afisreInstructiuni()
 {
 	
-	cout << " -----------------------------------------------------------------------------------------" << endl;
+	cout << " ----------------------------------------------------------------------------------------" << endl;
 	cout << "	Blackjack este un joc de cazinou foarte popular si este destul de usor de invatat.	 " << endl;
 	cout << " Obiectivul de baza al jocului de blackjack este sa se obtina un total al cartilor	 	 " << endl;
 	cout << " cat mai aproape posibil de numarul 21, insa daca numarul cumulat al mainii depaseste   " << endl;
@@ -499,6 +499,7 @@ void verificareCastigator(int jucator[], int dealer[])
 		cout << endl;
 		cout << "Ai castigat! Felicitari!" << endl;
 		sumapariu += sumapariu;
+		fout << "Suma castigata: " << sumapariu << endl;
 	}
 	else
 	if (punctajJucator == punctajDealer)
@@ -610,7 +611,7 @@ void afiseazaValoare(int carti[], int dimensiune)
 
 int main()
 {
-	system("color FC"); 
+	system("color F2"); 
 	cout << "                         BLACKJACK                      " << endl;
 	utilizator();
 	permitInstructiuni();
